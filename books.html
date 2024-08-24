@@ -1,0 +1,81 @@
+{% extends 'dashboard/base.html' %} 
+{% load static %} 
+{% block content %}
+{% load crispy_forms_tags %}
+
+<style>
+    body {
+        position: relative;
+        background-image: url("{% static 'images/book_bg.jfif' %}");
+        background-size: cover;
+        background-position: center;
+        /* Other background properties like repeat, attachment, etc. */
+    }
+
+    body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.6); /* Adjust opacity here */
+        z-index: -1; /* Ensure the pseudo-element is behind other content */
+    }
+</style>
+
+<section class='text-center container'>
+    <h2><strong>Search books and browse your favorite</strong></h2>
+    <p><b>Just enter the search query to obtain the results</b></p>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{form|crispy}}
+        <input class="btn btn-danger" type="submit" value="Submit">
+    </form><br>
+
+{% for result in results %}
+    <a href="{{result.preview}}" target="_blank">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-3">
+                        <img class="img-fluid" src="{{result.thumbnail}}" alt="">
+
+                    </div>
+                    <div class="col-md-9">
+                        <h3 class="p-0 m-0">{{result.title}}</h3>
+                        <b>
+                            <u>
+                                <h5 class="p-0 m-0">{{result.subtitle}}</h5>
+                            </u>
+                        </b>
+                        {% if result.description %}
+                        <h6 class="p-0 m-1">{{result.description}}</h6>
+                        {% endif %}
+                        
+                        <b> 
+                            {% if result.categories %}
+                            <h6 class="ml-0 mt-3">Category: 
+                                {% for category in result.categories %}
+                                    {{category}}
+                                {% endfor %}
+                            </h6>
+                            {% endif %}
+                            {% if result.count %}
+                            <h6 class="ml-0 mt-1">Pages: {{result.count}}</h6>
+                            {% endif %}
+                            {% if result.rating %}
+                            <h6 class="ml-0 mt-1">Rating: {{result.rating}}</h6>
+                            {% endif %}
+                        </b>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+    <br>
+</section>
+
+{% endblock content %}
